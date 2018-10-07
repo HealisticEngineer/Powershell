@@ -84,7 +84,7 @@ If($CertValide -eq $false){
     Sort-Object -Property NotBefore -Descending | Select-Object NotAfter, FriendlyName, DnsNameList, thumbprint -First 1
 
     # Set Thumbprint
-    Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Microsoft SQL Server\MSSQL14.$Instance\MSSQLServer\SuperSocketNetLib" -Name "Certificate" -Type String -Value "$($certs.thumbprint)"
+    Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Microsoft SQL Server\MSSQL14.$Instance\MSSQLServer\SuperSocketNetLib" -Name "Certificate" -Type String -Value "$($certs.thumbprint.ToLower())"
 
     # Set Forced Encryption
     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Microsoft SQL Server\MSSQL14.$instance\MSSQLServer\SuperSocketNetLib" -Name "ForceEncryption" -Type DWord -Value "1"
