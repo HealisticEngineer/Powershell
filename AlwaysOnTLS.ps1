@@ -33,8 +33,6 @@ Function Set-SQL_Cert {
 }
 
 
-
-
 $Instance = "MSSQLServer"
 # check if cluster
 $cluster = (Get-WindowsFeature -Name  Failover-Clustering).Installed
@@ -53,15 +51,20 @@ Sort-Object -Property NotBefore -Descending | Select-Object NotAfter, FriendlyNa
 if($cluster -eq $true -and $($ClusterStatus.status) -eq "Running"){
     write-output "this is cluster"
     $Array1 =@()
-    $Array1 += [net.dns]::GetHostEntry($env:computername).Hostname
     $AG = (Get-ClusterResource | Where-Object {$_.ResourceType -eq "Network Name" -AND $_.name -ne "Cluster Name"} | Get-ClusterParameter -Name DnsName).value
     foreach($listener in $AG) {
         $DNS = $listener + "." + $env:USERDNSDOMAIN
         $array1 += $DNS
     }
-    $notsame = Compare-Object -ReferenceObject $Array1 -DifferenceObject $certs.DnsNameList.Unicode
+    $same = [net.dns]::GetHostEntry($env:computername).Hostname
+    foreach($p in $array1){
+        $same += "," + $p
+    }
+    if($certs){
+    $notsame = Compare-Object -ReferenceObject $same -DifferenceObject $certs.DnsNameList.Unicode
     if($notsame){
         $CertValide = $false
+    } else {write-output "no cert"} 
     }
 } else {write-output "Cluster isn't running"}
 
@@ -72,7 +75,8 @@ if($($certs.NotAfter) -lt (Get-Date).AddDays(120)){
 
 If($CertValide -eq $false){
     # Get new Cert
-    Set-SR_Cert
+    Write-Output "Getting new cert"
+    Set-SQL_Cert
     }
 
     $Subject = "CN=" + [net.dns]::GetHostEntry($env:computername).Hostname + ", O=Lab, C=GB"
