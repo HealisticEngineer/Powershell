@@ -1,6 +1,4 @@
-$Instance = "MSSQLServer"
-
-Function Set-SR_Cert {
+Function Set-SQL_Cert {
 
     $Subject = "CN=" + [net.dns]::GetHostEntry($env:computername).Hostname + ", O=Lab, C=GB"
 
@@ -13,13 +11,12 @@ Function Set-SR_Cert {
     if($cluster -eq $true){
         # Build Array
         $Array1 =@()
-        $Array1 += [net.dns]::GetHostEntry($env:computername).Hostname
         $AG = (Get-ClusterResource | Where-Object {$_.ResourceType -eq "Network Name" -AND $_.name -ne "Cluster Name"} | Get-ClusterParameter -Name DnsName).value
         foreach($listener in $AG) {
             $DNS = $listener + "." + $env:USERDNSDOMAIN
             $array1 += $DNS
                 }
-        $string = "DNS=" + [net.dns]::GetHostEntry($env:computername).Hostname
+        $string = [net.dns]::GetHostEntry($env:computername).Hostname
         foreach($i in $array1)
         {               
             $string += "," + $i
@@ -37,6 +34,8 @@ Function Set-SR_Cert {
 
 
 
+
+$Instance = "MSSQLServer"
 # check if cluster
 $cluster = (Get-WindowsFeature -Name  Failover-Clustering).Installed
 $ClusterStatus = Get-Service -Name ClusSvc -ErrorAction SilentlyContinue
@@ -85,6 +84,5 @@ If($CertValide -eq $false){
 
     # Set Forced Encryption
     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Microsoft SQL Server\MSSQL14.$instance\MSSQLServer\SuperSocketNetLib" -Name "ForceEncryption" -Type DWord -Value "1"
-
 
 
