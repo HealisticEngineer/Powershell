@@ -1,0 +1,32 @@
+#Requires -RunAsAdministrator
+
+# create sample data
+$array =@()
+$item = New-Object PSObject
+$item | Add-Member -type NoteProperty -Name 'Path' -Value 'C:\tmp'
+$item | Add-Member -type NoteProperty -Name 'logins' -Value 'NT AUTHORITY\SYSTEM'
+$item | Add-Member -type NoteProperty -Name 'permissions' -Value 'FullControl'
+$item2 = New-Object PSObject
+$item2 | Add-Member -type NoteProperty -Name 'Path' -Value 'C:\tmp'
+$item2 | Add-Member -type NoteProperty -Name 'logins' -Value 'john'
+$item2 | Add-Member -type NoteProperty -Name 'permissions' -Value 'Read'
+
+$Array += $item
+$Array += $item2
+
+# read sample data
+$array
+
+
+# Create directory security object
+$acl = New-Object System.Security.AccessControl.DirectorySecurity
+$acl.SetAccessRuleProtection($true, $true)
+
+# foreach in array
+try{
+foreach($login in $array){
+$account = new-object System.Security.AccessControl.FileSystemAccessRule("$($login.logins)", "$($login.permissions)", "ContainerInherit, ObjectInherit", "None", "Allow")
+$ACL.SetAccessRule($account)
+$ACL | Set-ACL -path $login.Path
+}
+} catch {$_}
