@@ -235,16 +235,37 @@ configuration DomainLab
             AddressFamily = 'IPv4'
             DependsOn = "[WaitForADDomain]DscForestWait"
         }
-        xDhcpServerOption Option
+        DhcpScopeOptionValue scopeOptionGateway
         {
-            Ensure = 'Present'
-            ScopeID = '172.16.0.0'
-            DnsDomain = 'lab.net'
-            DnsServerIPAddress = '172.16.0.10','8.8.8.8'
-            Router = '172.16.0.1'
+            OptionId = 3
+            Value = '172.16.0.1'
+            ScopeId =   '172.16.0.0'
+            VendorClass = ''
+            UserClass   = ''
             AddressFamily = 'IPv4'
-            DependsOn = "[WaitForADDomain]DscForestWait"
         }
+
+        # Setting scope DNS servers
+        DhcpScopeOptionValue scopeOptionDNS
+        {
+            OptionId = 6
+            Value = '172.16.0.10','8.8.8.8'
+            ScopeId =   '172.16.0.0'
+            VendorClass = ''
+            UserClass   = ''
+            AddressFamily = 'IPv4'
+        }
+
+        # Setting scope DNS domain name
+        DhcpScopeOptionValue scopeOptionDNSDomainName
+        {
+            OptionId = 15
+            Value = 'lab.net'
+            ScopeId =   '172.16.0.0'
+            VendorClass = ''
+            UserClass   = ''
+            AddressFamily = 'IPv4'
+        } 
 
     }
 }
