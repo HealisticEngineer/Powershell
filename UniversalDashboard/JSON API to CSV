@@ -1,0 +1,39 @@
+# create dummy API
+Get-UDRestApi | Stop-UDRestApi
+$Server = Start-UDRestApi -Port 8888 -Endpoint @(
+    New-UDEndpoint -Url "data" -Method "GET" -Endpoint {     
+        $Cache = @(
+            [PSCustomObject]@{ RecordType ="Employee"; Status = "On Leave"; Name = "Adam" ; Lastname = "Smith" ; Parameter = [PSCustomObject]@{ ID = 1; Role = "Developer" }}
+            [PSCustomObject]@{ RecordType ="Employee"; Status = "Active"; Name = "Eva" ; Lastname = "Walker"; Parameter = [PSCustomObject]@{ID = 2; Role = "Admin"}}
+            [PSCustomObject]@{ RecordType ="Employee"; Status = "Active"; Name = "Peter"; Lastname = "Field" ; Parameter = [PSCustomObject]@{ ID = 3; Role = "Backoffice"}}
+            [PSCustomObject]@{ RecordType ="Employee"; Status = "Inactive"; Name = "Joe" ; Lastname = "Jackson"; Parameter = [PSCustomObject]@{ ID = 4; Role = "Admin"}}
+            [PSCustomObject]@{ RecordType ="Employee"; Status = "Active" ;Name = "Zuzana" ; Lastname = "Nikolava"; Parameter = [PSCustomObject]@{ ID = 5; Role = "Developer"}}
+            [PSCustomObject]@{ RecordType ="Employee"; Status = "Active"; Name = "Thomas" ; Lastname = "Young"; Parameter = [PSCustomObject]@{ ID = 6; Role = "Manager"}}
+        ) | ConvertTo-Json
+        $Cache
+    }
+)
+
+# Grab dummy data
+$Data = Invoke-RestMethod -Uri http://localhost:8888/api/data
+
+# Filter Dummy Data
+$data.where({$_.status -ne "Inactive"})
+
+# export filtered data with time date stamp to CSV
+$today = get-date -Format "yyyy-MM-dd HH_mm_ss"
+$data.where({$_.status -ne "Inactive"}) | Export-Csv -Path c:\temp\${today}_MyFile.csv
+
+
+# Format Parameter into collumn
+$mystack = new-object 'system.collections.stack'
+$data  | ForEach-Object {
+    $mystack.push(
+        [PSCustomObject]@{ RecordType = $($_.RecordType); Status  = $($_.status); Name = $($_.Name); Surname = $($_.Lastname); ID = $($_.Parameter.ID); Role = $($_.Parameter.Role)}
+    )
+}
+# export file as CSV
+$today = get-date -Format "yyyy-MM-dd HH_mm_ss"
+$array =@()
+$array += $mystack 
+$array  | Export-Csv -Path c:\temp\${today}_MyFile.csv
