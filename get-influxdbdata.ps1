@@ -32,4 +32,4 @@ function Get-InfluxDBData {
 
 $query = 'SELECT * FROM "win_cpu"'
 $Url ='http://192.168.1.204:8086/query?db=performance_data'
-$data = Get-InfluxDB -Url $Url -Query $query
+$data = Get-InfluxDBData -Url $Url -Query $query
