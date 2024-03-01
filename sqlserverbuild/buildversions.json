@@ -1,0 +1,16 @@
+{
+    "sqlServerVersions": [
+        {
+            "version": "2017",
+            "buildVersion": "14.0.3465.1"
+        },
+        {
+            "version": "2019",
+            "buildVersion": "15.0.2000.169"
+        },
+        {
+            "version": "2022",
+            "buildVersion": "16.0.1000.169"
+        }
+    ]
+}
