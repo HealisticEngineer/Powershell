@@ -1,4 +1,4 @@
-Example powershell script that scrapes [sql](http://sqlserverbuilds.blogspot.com/)http://sqlserverbuilds.blogspot.com/ for the latest builds.
+Example powershell script that scrapes [sqlserverbuilds.blogspot.com](http://sqlserverbuilds.blogspot.com/)http://sqlserverbuilds.blogspot.com/ for the latest builds.
 
 ```
 buildversions.json 
