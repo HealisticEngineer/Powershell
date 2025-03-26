@@ -1,4 +1,4 @@
-
+# Function to retrieve installed .NET and ASP.NET Core versions from specific directories.
 function Get-dotnet {
     # declare folder paths
     $ASPNETCoreX86 = "C:\Program Files (x86)\dotnet\shared\Microsoft.aspnetcore"
@@ -75,6 +75,7 @@ function Get-dotnet {
     Return $array
 }
 
+# Function to check for updates to .NET or ASP.NET Core versions and generate download URLs for newer versions.
 function Update-DotNet {
         # pipe line paramiter
         [CmdletBinding()]
@@ -143,9 +144,9 @@ function Update-DotNet {
         # change from output to download and install
         Return $PayloadURL
     }
-    
 }
 
+# Function to download and install .NET or ASP.NET Core updates using the provided URLs.
 function Start-dotnetupgrade {
     # pipe line paramiter
     [CmdletBinding()]
@@ -161,8 +162,8 @@ function Start-dotnetupgrade {
     }  
 }
 
+# Set the working directory to c:\temp and initiate the update process.
+If (-not (Test-Path -Path "c:\temp")) {New-Item -Path "c:\temp" -ItemType Directory}
 Set-Location c:\temp
 $update = Get-dotnet | Update-DotNet 
-if($update -ne $null){
-    Start-dotnetupgrade $update.url
-}
+if($update -ne $null) { Start-dotnetupgrade $update.url }
