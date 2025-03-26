@@ -1,47 +1,52 @@
-# Uninstall.ps1
+# Uninstall Software Script
 
-This PowerShell script is used to uninstall specific software packages from a Windows machine. It targets both x86 and x64 versions of the software.
+This PowerShell script provides functionality to list installed software and uninstall specific software from a Windows system.
+
+## Features
+
+1. **List Installed Software**  
+   The `Get-InstalledSoftware` function retrieves a list of all installed software on the system.
+
+2. **Uninstall Software**  
+   The `Uninstall-Software` function allows you to uninstall specific software by name. It supports optional uninstall switches for silent or custom uninstallation.
 
 ## Usage
 
-1. Open PowerShell with administrative privileges.
-2. Navigate to the directory containing the `Uninstall.ps1` script.
-3. Execute the script:
-    ```powershell
-    .\Uninstall.ps1
-    ```
+### Prerequisites
+- Run the script with administrative privileges.
+- Ensure PowerShell is installed on your system.
 
-## Script Details
+### Functions
 
-The script performs the following tasks:
+#### `Get-InstalledSoftware`
+Lists all installed software on the system.
 
-1. **Get a list of installed software**:
-    ```powershell
-    $list = Get-WmiObject -Class Win32_Product | Select-Object -Property Name
-    ```
+```powershell
+Get-InstalledSoftware
+```
 
-2. **Loop over the packages to remove**:
-    ```powershell
-    foreach ($i in ($list.name -cmatch "Microsoft Visual C\++ 2010")) {
-        $MyApp = Get-WmiObject -Class Win32_Product | Where-Object{$_.Name -eq "$i"}
-        $MyApp.Uninstall()
-    }
-    ```
+#### `Uninstall-Software`
+Uninstalls a specific software by name.
 
-3. **Cross-check if the package is uninstalled**:
-    ```powershell
-    if(Get-WmiObject -Class Win32_Product | Where-Object{$_.Name -eq "$i"} -eq $null) {
-        write-output "Package is not present"
-    } else {
-        write-output "package still installed"
-    }
-    ```
+**Parameters:**
+- `-SoftwareName` (Mandatory): The name of the software to uninstall.
+- `-uninstallswitch` (Optional): A custom uninstall switch (e.g., `/quiet` for silent uninstallation).
+
+**Example Usage:**
+
+1. Uninstall software without a custom switch:
+   ```powershell
+   Uninstall-Software -SoftwareName "Microsoft Visual C++ 2010"
+   ```
+
+2. Uninstall software with a custom switch:
+   ```powershell
+   Uninstall-Software -SoftwareName "Microsoft Visual C++ 2010" -uninstallswitch "/quiet"
+   ```
 
 ## Notes
+- The script automatically escapes special characters like `++` in software names.
+- After uninstallation, the script verifies if the software has been successfully removed and provides feedback.
 
-- Ensure you have the necessary administrative privileges to uninstall software.
-- Modify the script to target different software packages by changing the `-cmatch` pattern.
-
-## License
-
-This script is provided as-is without any warranty. Use at your own risk.
+## Disclaimer
+Use this script with caution. Ensure you are uninstalling the correct software to avoid accidental removal of critical applications.
